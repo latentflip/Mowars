@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% if logged_in %}
+  You are logged in!
+  <p><strong>screen name:</strong> {{ screen_name }}</p>
+  <p><strong>location:</strong> {{ location }}</p>
+  <p><strong>rate info:</strong> {{ rate_info }}</p>
+{% else %}
+  <a href="/oauth/twitter/login">Login via Twitter</a>
+{% endif %}
+
     <img src="/img?img_id=ag1tb3VzdGFjaGV3YXJzcg8LEglNb3VzdGFjaGUYBAw" alt=""/>
 {% endblock %}

@@ -19,9 +19,21 @@ from models import Moustache
 
 class MainPage(webapp.RequestHandler):
     def get(self):
+        client = OAuthClient("twitter", self)
+        logged_in = client.get_cookie()
+        
+        extra = {}
+        if logged_in:
+            info = client.get("/account/verify_credentials")
+            extra.update(info)
+            rate_info = client.get("/account/rate_limit_status")
+            extra["rate_info"] = rate_info
+        
         template_values = {
-            'pagetitle': 'Welcome to Moustache Wars',
+            "pagetitle": 'Welcome to Moustache Wars',
+            "logged_in": logged_in,
         }
+        template_values.update(extra)
         
         path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
         self.response.out.write(template.render(path, template_values))
@@ -104,7 +116,6 @@ application = webapp.WSGIApplication(
                                       ('/img', Image),
                                       # Logins
                                       ('/oauth/(.*)/(.*)', OAuthHandler),
-                                      ("/login", Login),],
                                      debug=True)
 
 def main():
