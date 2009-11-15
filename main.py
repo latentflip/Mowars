@@ -6,6 +6,10 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext.webapp import template
 from google.appengine.ext import db
 
+import sys
+sys.path.insert(0, "lib")
+from twitter_oauth_handler import *
+
 from models import Moustache
 
 
@@ -41,9 +45,47 @@ class Upload(webapp.RequestHandler):
     path = os.path.join(os.path.dirname(__file__), 'templates/upload.html')
     self.response.out.write(template.render(path, template_values))
 
+HEADER = """
+<html><head><title>Twitter OAuth Demo</title>
+</head><body>
+<h1>Twitter OAuth Demo App</h1>
+"""
+
+FOOTER = "</body></html>"
+
+class Login(webapp.RequestHandler):
+    def get(self):
+        client = OAuthClient('twitter', self)
+        #gdata = OAuthClient('google', self, scope='http://www.google.com/calendar/feeds')
+
+        write = self.response.out.write; write(HEADER)
+
+        if not client.get_cookie():
+            write('<a href="/oauth/twitter/login">Login via Twitter</a>')
+            write(FOOTER)
+            return
+
+        write('<a href="/oauth/twitter/logout">Logout from Twitter</a><br /><br />')
+
+        info = client.get('/account/verify_credentials')
+
+        write("<strong>Screen Name:</strong> %s<br />" % info['screen_name'])
+        write("<strong>Location:</strong> %s<br />" % info['location'])
+
+        rate_info = client.get('/account/rate_limit_status')
+
+        write("<strong>API Rate Limit Status:</strong> %r" % rate_info)
+
+        write(FOOTER)
+
+
+
 application = webapp.WSGIApplication(
                                      [('/', MainPage),
-                                      ('/upload', Upload)],
+                                      ('/upload', Upload),
+                                      # Logins
+                                      ('/oauth/(.*)/(.*)', OAuthHandler),
+                                      ("/login", Login),],
                                      debug=True)
 
 def main():
