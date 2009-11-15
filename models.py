@@ -73,6 +73,11 @@ class Moustache(db.Model):
   creator = db.UserProperty()
   wins = db.IntegerProperty(default=0)
   losses = db.IntegerProperty(default=0)
+  
+  def win_percentage(self):
+      total = self.wins+self.losses
+      return int((float(self.wins)/total)*100)
+      
 
 
 class Vote(db.Model):

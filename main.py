@@ -19,6 +19,14 @@ from models import Moustache, get_random_taches, Vote
 
 class MainPage(webapp.RequestHandler):
     def get(self):
+        template_values = self.auth_and_taches()
+        self.to_template(template_values)
+        
+    def to_template(self, template_values):
+        path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
+        self.response.out.write(template.render(path, template_values))
+        
+    def auth_and_taches(self):
         client = OAuthClient("twitter", self)
         logged_in = client.get_cookie()
         
@@ -38,9 +46,8 @@ class MainPage(webapp.RequestHandler):
             "tache2": tache2,
         }
         template_values.update(extra)
+        return template_values
         
-        path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
-        self.response.out.write(template.render(path, template_values))
     def post(self):
         loser = db.get(str(self.request.get('loser')))
         winner = db.get(str(self.request.get('winner')))
@@ -50,8 +57,16 @@ class MainPage(webapp.RequestHandler):
         #Wins and losses
         loser.losses = loser.losses+1
         winner.wins = winner.wins+1
+        loser.put()
+        winner.put()
         
-        self.response.out.write('hllo')
+        extra_values = {}
+        extra_values['last_winner'] = winner
+        extra_values['last_loser'] = loser
+        
+        template_values = self.auth_and_taches()
+        template_values.update(extra_values)
+        self.to_template(template_values)
         
 
 
