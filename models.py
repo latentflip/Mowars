@@ -25,9 +25,31 @@ import hashlib
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from google.appengine.api import users
+import random
+
 
 PAGE_SIZE = 20
 DAY_SCALE = 4
+
+def get_random_taches():
+  taches = Moustache.all()
+  """Get two random taches from the datastore. This will break with more
+    than 1000 taches
+  """
+  num_taches = total_taches()
+  int1 = random.randint(0,num_taches-1)
+  int2 = random.randint(0,num_taches-1)
+  while int2 == int1:
+    int2 = random.randint(0,num_taches-1)
+  return taches[int1], taches[int2]
+  
+
+def total_taches():
+  """Find the total number of taches in the datastore
+  this will break with more than 1000 taches
+  """
+  taches = Moustache.all(keys_only=True).count()
+  return taches
 
 
 class Moustache(db.Model):
@@ -42,13 +64,16 @@ class Moustache(db.Model):
     creator:        The user that added this quote.
   """
   name = db.StringProperty(multiline=True)
+  modified = db.DateTimeProperty(auto_now=True)
   image = db.BlobProperty()
   uri   = db.StringProperty()
   rank = db.StringProperty()
   created = db.DateTimeProperty(auto_now_add=True)
   votesum = db.IntegerProperty(default=0)
   creator = db.UserProperty()
-  
+  wins = db.IntegerProperty(default=0)
+  losses = db.IntegerProperty(default=0)
+
 
 class Vote(db.Model):
   """Storage for a single vote by a single user on a single quote.
@@ -60,6 +85,7 @@ class Vote(db.Model):
   Properties
     vote: The value of 1 for like, -1 for dislike.
   """
+  created = db.DateTimeProperty(auto_now_add=True)
   winner = db.ReferenceProperty(Moustache,
           collection_name="vote_winner_set")
   loser = db.ReferenceProperty(Moustache,

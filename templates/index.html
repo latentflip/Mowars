@@ -11,5 +11,16 @@
   <a href="/oauth/twitter/login">Login via Twitter</a>
 {% endif %}
 
-    <img src="/img?img_id=ag1tb3VzdGFjaGV3YXJzcg8LEglNb3VzdGFjaGUYBAw" alt=""/>
+    <div id="vs_panel">
+    <form action="/" method="post">
+        <input type="image" name="submit" src="/img?img_id={{tache1.key}}" border="0">
+        <input type="hidden" name="winner" id="winner" value="{{tache1.key}}"/>
+        <input type="hidden" name="loser" id="loser" value="{{tache2.key}}"/>
+    </form>
+    <span class="vs">VS.</span>
+    <form action="/" method="post">
+        <input type="image" name="submit" src="/img?img_id={{tache2.key}}" border="0">
+        <input type="hidden" name="winner" id="winner" value="{{tache2.key}}"/>
+        <input type="hidden" name="loser" id="loser" value="{{tache1.key}}"/>
+    </form>
 {% endblock %}
