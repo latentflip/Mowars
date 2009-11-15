@@ -1,8 +1,9 @@
-import cgi, os, sys
+import cgi, os, sys, re
 
 sys.path.insert(0, "lib")
 
 import PIL
+from datetime import date
 
 from google.appengine.api import users
 from google.appengine.ext import webapp
@@ -11,11 +12,13 @@ from google.appengine.ext.webapp import template
 from google.appengine.ext import db
 from google.appengine.api import images
 
+import twitter as twapi
+from twitpicapi import get_twitpic_image
 
 from twitter_oauth_handler import *
 #import PIL
 
-from models import Moustache, get_random_taches, Vote, get_top_taches, get_bottom_taches
+from models import Moustache, get_random_taches, Vote, get_top_taches, get_bottom_taches, get_spider, Spider
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -74,6 +77,7 @@ class Top10(webapp.RequestHandler):
     def get(self):
         taches = get_top_taches()
         template_values = {
+            'page-title': 'Top 10 Taches',
             'taches': taches,
             'ranking_type': 'Top',
         }
@@ -84,11 +88,66 @@ class Bottom10(webapp.RequestHandler):
     def get(self):
         taches = get_bottom_taches()
         template_values = {
+            'pagetitle': 'Bottom 10 Taches',
             'taches': taches,
             'ranking_type': 'Bottom',
         }
         path = os.path.join(os.path.dirname(__file__), 'templates/topbottom.html')
         self.response.out.write(template.render(path, template_values))       
+
+
+today = date.today()
+
+class GrabTwitter(webapp.RequestHandler):
+    def get(self):
+        spider = get_spider()
+        if not spider:
+            spider = Spider()
+            spider.put()
+            
+        twitpic_spider_list = spider.twitpics
+        
+        twitter_search = twapi.Twitter(domain="search.twitter.com")
+        twitter_search.encoded_args = 'q=&ands=&phrase=twitpic&ors=%23movember+%23mowars&since=' + str(spider.last_since) + '&rpp=100&until=' + str(spider.last_until)
+        x = twitter_search.search()
+        
+        reg = re.compile(r'http://(www)?twitpic.com/([^\s]*)\s*', re.I)
+        results = []
+        
+        for twt in x['results']:
+                res = reg.findall(twt['text'])
+            
+                for url_groups in res:
+                    dict = {
+                        'name': twt['from_user'],
+                        'message': twt['text'],
+                        'img_url': url_groups[1],
+                    }
+
+                    tache = Moustache()
+                    tache.name = dict['name']
+                    tache.tweet = dict['message']
+                    tache.twitpic = dict['img_url']
+                    
+                    if dict['img_url'] not in twitpic_spider_list:
+                        try:
+                            tache_image = images.resize(get_twitpic_image(dict['img_url']), 400, 400)
+                            tache.image = db.Blob(tache_image)
+                            tache.put()
+                            twitpic_spider_list.append(dict['img_url'])
+                            results.append(dict)
+                        except:
+                            pass
+        
+        spider.last_since = spider.last_until
+        new_until = spider.last_until + timedelta(days=1)
+        if new_until<=today:
+            spider.last_until = new_until
+        else:
+            spider.last_until = today
+        spider.twitpics = twitpic_spider_list
+        spider.put()
+        self.response.out.write(results)
 
 class Upload(webapp.RequestHandler):
   def post(self):
@@ -146,6 +205,7 @@ application = webapp.WSGIApplication(
                                       ('/img', Image),
                                       ('/tachewin', Top10),
                                       ('/tachefail', Bottom10),
+                                      ('/grabtwitter', GrabTwitter),
                                       # Logins
                                       ('/oauth/(.*)/(.*)', OAuthHandler)
                                      ],

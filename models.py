@@ -27,7 +27,6 @@ from google.appengine.api import memcache
 from google.appengine.api import users
 import random
 
-
 PAGE_SIZE = 20
 DAY_SCALE = 4
 
@@ -58,7 +57,22 @@ def total_taches():
   taches = Moustache.all(keys_only=True).count()
   return taches
 
+default_since = datetime.date(2009,11,01)
+default_until = datetime.date(2009,11,06)
 
+class Spider(db.Model):
+    last_search = db.DateTimeProperty(auto_now=True)
+    last_since = db.DateProperty(default=default_since)
+    last_until = db.DateProperty(default=default_until)
+    twitpics = db.StringListProperty()
+
+def get_spider():
+    query = Spider.all().order('-last_search')
+    results = query.fetch(1)
+    if results:
+        return results[0]
+    else:
+        return False
 
 class Moustache(db.Model):
   """Storage for a single moustache and its metadata
@@ -71,7 +85,7 @@ class Moustache(db.Model):
     created:        Date and time moustache was created
     creator:        The user that added this quote.
   """
-  name = db.StringProperty(multiline=True)
+  name = db.StringProperty()
   modified = db.DateTimeProperty(auto_now=True)
   image = db.BlobProperty()
   uri   = db.StringProperty()
@@ -82,6 +96,11 @@ class Moustache(db.Model):
   wins = db.IntegerProperty(default=0)
   losses = db.IntegerProperty(default=0)
   win_percentage = db.IntegerProperty(default=0)
+  tweet = db.StringProperty(default='', multiline=True)
+  twitpic = db.StringProperty(default='')
+  
+  def total_battles(self):
+      return self.wins+self.losses
   
   def calc_win_percentage(self):
     total = self.wins+self.losses

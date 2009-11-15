@@ -4,8 +4,16 @@
 
 <h1>{{ranking_type}} 10</h1>
 
+<ul class="rank_list">
 {% for tache in taches %}
-    <img src="/img?img_id={{tache.key}}" alt="">
+    <li>
+        <h4>{{forloop.counter}}</h4>
+        <img src="/img?img_id={{ tache.key }}" alt="">
+        <p>
+            <a href="http://www.twitter.com/{{ tache.name }}">{{tache.name}}</a> has won {{ tache.win_percentage }}% of {{ tache.total_battles }} battles.
+        </p>
+    </li>
 {% endfor %}
+</ul>
 
 {% endblock %}
