@@ -44,7 +44,12 @@ def get_random_taches():
   return taches[int1], taches[int2]
 
 def get_top_taches():
-    pass
+    query = Moustache.all().order('-win_percentage')
+    return query.fetch(10)
+    
+def get_bottom_taches():
+    query = Moustache.all().order('win_percentage')
+    return query.fetch(10)
 
 def total_taches():
   """Find the total number of taches in the datastore

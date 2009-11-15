@@ -15,7 +15,7 @@ from google.appengine.api import images
 from twitter_oauth_handler import *
 #import PIL
 
-from models import Moustache, get_random_taches, Vote
+from models import Moustache, get_random_taches, Vote, get_top_taches, get_bottom_taches
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -70,7 +70,25 @@ class MainPage(webapp.RequestHandler):
         template_values.update(extra_values)
         self.to_template(template_values)
         
+class Top10(webapp.RequestHandler):
+    def get(self):
+        taches = get_top_taches()
+        template_values = {
+            'taches': taches,
+            'ranking_type': 'Top',
+        }
+        path = os.path.join(os.path.dirname(__file__), 'templates/topbottom.html')
+        self.response.out.write(template.render(path, template_values))
 
+class Bottom10(webapp.RequestHandler):
+    def get(self):
+        taches = get_bottom_taches()
+        template_values = {
+            'taches': taches,
+            'ranking_type': 'Bottom',
+        }
+        path = os.path.join(os.path.dirname(__file__), 'templates/topbottom.html')
+        self.response.out.write(template.render(path, template_values))       
 
 class Upload(webapp.RequestHandler):
   def post(self):
@@ -126,6 +144,8 @@ application = webapp.WSGIApplication(
                                      [('/', MainPage),
                                       ('/upload', Upload),
                                       ('/img', Image),
+                                      ('/tachewin', Top10),
+                                      ('/tachefail', Bottom10),
                                       # Logins
                                       ('/oauth/(.*)/(.*)', OAuthHandler)
                                      ],
