@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{ranking_type}} 10</h1>
+
+{% for tache in taches %}
+    <img src="/img?img_id={{tache.key}}" alt="">
+{% endfor %}
+
+{% endblock %}
