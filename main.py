@@ -41,13 +41,20 @@ class MainPage(webapp.RequestHandler):
 
 class Upload(webapp.RequestHandler):
   def post(self):
+    client = OAuthClient("twitter", self)
+    logged_in = client.get_cookie()
+    if not logged_in:
+      self.redirect("/")
+      
+    info = client.get("/account/verify_credentials")
+    
     tache = Moustache()
 
     #if users.get_current_user():
     #  greeting.author = users.get_current_user()
 
     if self.request.get('add-tache'):
-      tache.name = self.request.get('name')
+      tache.name = info["screen_name"]
       tache_image = images.resize(self.request.get('image'), 400, 400)
       tache.image = db.Blob(tache_image)
       tache.put()
@@ -56,6 +63,12 @@ class Upload(webapp.RequestHandler):
       self.render_form()
       
   def get(self):
+    client = OAuthClient("twitter", self)
+    logged_in = client.get_cookie()
+    if not logged_in:
+      # TODO: Tell them they need to login + link to Twitter login.
+      self.redirect("/")
+
     self.render_form()
     
   def render_form(self):
