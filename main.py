@@ -10,6 +10,7 @@ from google.appengine.api import images
 import sys
 sys.path.insert(0, "lib")
 from twitter_oauth_handler import *
+#import PIL
 
 from models import Moustache
 #from views import Image
@@ -77,7 +78,8 @@ application = webapp.WSGIApplication(
                                       ('/upload', Upload),
                                       ('/img', Image),
                                       # Logins
-                                      ('/oauth/(.*)/(.*)', OAuthHandler),
+                                      ('/oauth/(.*)/(.*)', OAuthHandler)
+                                     ],
                                      debug=True)
 
 def main():
