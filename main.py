@@ -14,12 +14,13 @@ from models import Moustache
 
 
 class MainPage(webapp.RequestHandler):
-  def get(self):
-    template_values = {
-      'pagetitle': 'Welcome to Moustache Wars',
-    }
-    path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
-    self.response.out.write(template.render(path, template_values))
+    def get(self):
+        template_values = {
+            'pagetitle': 'Welcome to Moustache Wars',
+        }
+        
+        path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
+        self.response.out.write(template.render(path, template_values))
 
 class Upload(webapp.RequestHandler):
   def post(self):
