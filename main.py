@@ -96,7 +96,7 @@ class Login(webapp.RequestHandler):
 application = webapp.WSGIApplication(
                                      [('/', MainPage),
                                       ('/upload', Upload),
-                                      ('/img', Image)],
+                                      ('/img', Image),
                                       # Logins
                                       ('/oauth/(.*)/(.*)', OAuthHandler),
                                       ("/login", Login),],
