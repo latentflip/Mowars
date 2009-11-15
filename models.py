@@ -50,6 +50,10 @@ def get_bottom_taches():
     query = Moustache.all().order('win_percentage')
     return query.fetch(10)
 
+def get_taches_by_username(username):
+    query  = Moustache.all().filter('name = ', username)
+    return query.fetch(20)
+
 def total_taches():
   """Find the total number of taches in the datastore
   this will break with more than 1000 taches

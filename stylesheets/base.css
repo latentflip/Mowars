@@ -5,3 +5,17 @@
 .rank_list img {
 	width: 200px;
 }
+
+#vs_panel img {
+	width: 300px;
+}
+
+#vs_panel .vote_img {
+	width:400px;
+	float: left;
+}
+
+#vs_panel .vs {
+	width: 50px;
+	float: left;
+}

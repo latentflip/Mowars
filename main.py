@@ -18,7 +18,7 @@ from twitpicapi import get_twitpic_image
 from twitter_oauth_handler import *
 #import PIL
 
-from models import Moustache, get_random_taches, Vote, get_top_taches, get_bottom_taches, get_spider, Spider
+from models import Moustache, get_random_taches, Vote, get_top_taches, get_bottom_taches, get_spider, Spider, get_taches_by_username
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -84,6 +84,17 @@ class Top10(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), 'templates/topbottom.html')
         self.response.out.write(template.render(path, template_values))
 
+class AllTaches(webapp.RequestHandler):
+    def get(self):
+        taches = Moustache.all().order('-created').fetch(30)
+        template_values = {
+            'pagetitle': 'Bottom 10 Taches',
+            'taches': taches,
+            'ranking_type': 'Bottom',
+        }
+        path = os.path.join(os.path.dirname(__file__), 'templates/topbottom.html')
+        self.response.out.write(template.render(path, template_values))    
+
 class Bottom10(webapp.RequestHandler):
     def get(self):
         taches = get_bottom_taches()
@@ -94,6 +105,18 @@ class Bottom10(webapp.RequestHandler):
         }
         path = os.path.join(os.path.dirname(__file__), 'templates/topbottom.html')
         self.response.out.write(template.render(path, template_values))       
+
+class Profile(webapp.RequestHandler):
+    def get(self, username):
+        taches = get_taches_by_username(username)
+        template_values = {
+            'page-title': 'Top 10 Taches',
+            'taches': taches,
+            'ranking_type': 'Top',
+        }
+        path = os.path.join(os.path.dirname(__file__), 'templates/topbottom.html')
+        self.response.out.write(template.render(path, template_values))
+        
 
 
 today = date.today()
@@ -147,7 +170,8 @@ class GrabTwitter(webapp.RequestHandler):
             spider.last_until = today
         spider.twitpics = twitpic_spider_list
         spider.put()
-        self.response.out.write(results)
+        spider = get_spider()
+        self.response.out.write(str(spider.twitpics))
 
 class Upload(webapp.RequestHandler):
   def post(self):
@@ -206,6 +230,8 @@ application = webapp.WSGIApplication(
                                       ('/tachewin', Top10),
                                       ('/tachefail', Bottom10),
                                       ('/grabtwitter', GrabTwitter),
+                                      ('/profile/(.*)', Profile),
+                                      #('/all', AllTaches),
                                       # Logins
                                       ('/oauth/(.*)/(.*)', OAuthHandler)
                                      ],
