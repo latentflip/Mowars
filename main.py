@@ -5,13 +5,14 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext.webapp import template
 from google.appengine.ext import db
+from google.appengine.api import images
 
 import sys
 sys.path.insert(0, "lib")
 from twitter_oauth_handler import *
 
 from models import Moustache
-
+#from views import Image
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -40,9 +41,11 @@ class Upload(webapp.RequestHandler):
 
     #if users.get_current_user():
     #  greeting.author = users.get_current_user()
+
     if self.request.get('add-tache'):
       tache.name = self.request.get('name')
-      tache.image = self.request.get('image')
+      avatar = images.resize(self.request.get("image"), 32, 32)
+      tache.image = db.Blob(tache_image)
       tache.put()
       self.redirect('/')
     else:
@@ -57,6 +60,17 @@ class Upload(webapp.RequestHandler):
     }
     path = os.path.join(os.path.dirname(__file__), 'templates/upload.html')
     self.response.out.write(template.render(path, template_values))
+
+class Image (webapp.RequestHandler):
+  def get(self):
+    tache_id = self.request.get("img_id")
+    tache = db.get(tache_id)
+    
+    if tache.image:
+      self.response.headers['Content-Type'] = "image/jpg"
+      self.response.out.write(tache.image)
+    else:
+      self.error(404)
 
 HEADER = """
 <html><head><title>Twitter OAuth Demo</title>
@@ -92,10 +106,10 @@ class Login(webapp.RequestHandler):
         write(FOOTER)
 
 
-
 application = webapp.WSGIApplication(
                                      [('/', MainPage),
                                       ('/upload', Upload),
+                                      ('/img', Image),
                                       # Logins
                                       ('/oauth/(.*)/(.*)', OAuthHandler),
                                       ("/login", Login),],

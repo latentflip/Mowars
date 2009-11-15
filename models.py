@@ -41,8 +41,8 @@ class Moustache(db.Model):
     created:        Date and time moustache was created
     creator:        The user that added this quote.
   """
-  name = db.StringProperty(required=True, multiline=True)
-  image = db.BlobProperty(required=True)
+  name = db.StringProperty(multiline=True)
+  image = db.BlobProperty()
   uri   = db.StringProperty()
   rank = db.StringProperty()
   created = db.DateTimeProperty(auto_now_add=True)
