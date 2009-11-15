@@ -42,7 +42,9 @@ def get_random_taches():
   while int2 == int1:
     int2 = random.randint(0,num_taches-1)
   return taches[int1], taches[int2]
-  
+
+def get_top_taches():
+    pass
 
 def total_taches():
   """Find the total number of taches in the datastore
@@ -50,6 +52,7 @@ def total_taches():
   """
   taches = Moustache.all(keys_only=True).count()
   return taches
+
 
 
 class Moustache(db.Model):
@@ -73,10 +76,11 @@ class Moustache(db.Model):
   creator = db.UserProperty()
   wins = db.IntegerProperty(default=0)
   losses = db.IntegerProperty(default=0)
+  win_percentage = db.IntegerProperty(default=0)
   
-  def win_percentage(self):
-      total = self.wins+self.losses
-      return int((float(self.wins)/total)*100)
+  def calc_win_percentage(self):
+    total = self.wins+self.losses
+    return int((float(self.wins)/total)*100)
       
 
 

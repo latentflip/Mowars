@@ -56,7 +56,9 @@ class MainPage(webapp.RequestHandler):
         
         #Wins and losses
         loser.losses = loser.losses+1
+        loser.win_percentage = loser.calc_win_percentage()
         winner.wins = winner.wins+1
+        winner.win_percentage = winner.calc_win_percentage()
         loser.put()
         winner.put()
         
