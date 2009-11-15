@@ -72,13 +72,20 @@ class MainPage(webapp.RequestHandler):
 
 class Upload(webapp.RequestHandler):
   def post(self):
+    client = OAuthClient("twitter", self)
+    logged_in = client.get_cookie()
+    if not logged_in:
+      self.redirect("/")
+      
+    info = client.get("/account/verify_credentials")
+    
     tache = Moustache()
 
     #if users.get_current_user():
     #  greeting.author = users.get_current_user()
 
     if self.request.get('add-tache'):
-      tache.name = self.request.get('name')
+      tache.name = info["screen_name"]
       tache_image = images.resize(self.request.get('image'), 400, 400)
       tache.image = db.Blob(tache_image)
       tache.put()
@@ -87,6 +94,12 @@ class Upload(webapp.RequestHandler):
       self.render_form()
       
   def get(self):
+    client = OAuthClient("twitter", self)
+    logged_in = client.get_cookie()
+    if not logged_in:
+      # TODO: Tell them they need to login + link to Twitter login.
+      self.redirect("/")
+
     self.render_form()
     
   def render_form(self):
@@ -106,41 +119,6 @@ class Image (webapp.RequestHandler):
       self.response.out.write(tache.image)
     else:
       self.error(404)
-
-
-HEADER = """
-<html><head><title>Twitter OAuth Demo</title>
-</head><body>
-<h1>Twitter OAuth Demo App</h1>
-"""
-
-FOOTER = "</body></html>"
-
-class Login(webapp.RequestHandler):
-    def get(self):
-        client = OAuthClient('twitter', self)
-        #gdata = OAuthClient('google', self, scope='http://www.google.com/calendar/feeds')
-
-        write = self.response.out.write; write(HEADER)
-
-        if not client.get_cookie():
-            write('<a href="/oauth/twitter/login">Login via Twitter</a>')
-            write(FOOTER)
-            return
-
-        write('<a href="/oauth/twitter/logout">Logout from Twitter</a><br /><br />')
-
-        info = client.get('/account/verify_credentials')
-
-        write("<strong>Screen Name:</strong> %s<br />" % info['screen_name'])
-        write("<strong>Location:</strong> %s<br />" % info['location'])
-
-        rate_info = client.get('/account/rate_limit_status')
-
-        write("<strong>API Rate Limit Status:</strong> %r" % rate_info)
-
-        write(FOOTER)
-
 
 application = webapp.WSGIApplication(
                                      [('/', MainPage),
