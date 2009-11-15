@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="upload-form">
+        <form action="upload.html" method="post">
+            <input type="text" name="name" id="name" />
+            <input type="file" name="image" id="image" />
+            <input type="hidden" name="add-tache" value="1"/>
+            <input type="submit" value="submit" />
+        </form>
+    </div>
+{% endblock %}

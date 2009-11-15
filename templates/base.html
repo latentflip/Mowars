@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html lang="en-GB">
+<head>
+    <title>{% block pagetitle %}Moustache Wars{% endblock %}</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="stylesheets/reset.css" media="all">
+    <link rel="stylesheet" type="text/css" href="stylesheets/base.css" media="all">
+</head>
+<body>
+    <div id="container-outer" class="container-12">
+        <div id="container">
+            <div id="header-outer">
+                <div id="header">
+                    
+                </div>
+            </div>
+            <div id="content-outer">
+                <div id="content">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
