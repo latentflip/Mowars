@@ -15,8 +15,7 @@ from google.appengine.api import images
 from twitter_oauth_handler import *
 #import PIL
 
-from models import Moustache
-#from views import Image
+from models import Moustache, get_random_taches, Vote
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -30,14 +29,31 @@ class MainPage(webapp.RequestHandler):
             rate_info = client.get("/account/rate_limit_status")
             extra["rate_info"] = rate_info
         
+        tache1, tache2 = get_random_taches()
+        
         template_values = {
             "pagetitle": 'Welcome to Moustache Wars',
             "logged_in": logged_in,
+            "tache1": tache1,
+            "tache2": tache2,
         }
         template_values.update(extra)
         
         path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
         self.response.out.write(template.render(path, template_values))
+    def post(self):
+        loser = db.get(str(self.request.get('loser')))
+        winner = db.get(str(self.request.get('winner')))
+        vote = Vote(winner=winner, loser=loser)
+        vote.put()
+        
+        #Wins and losses
+        loser.losses = loser.losses+1
+        winner.wins = winner.wins+1
+        
+        self.response.out.write('hllo')
+        
+
 
 class Upload(webapp.RequestHandler):
   def post(self):

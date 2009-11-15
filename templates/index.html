@@ -14,4 +14,16 @@
   <a name="fb_share" type="button_count" share_url="http://moustachewars.appspot.com" href="http://www.facebook.com/sharer.php">Share Moustache Wars!</a>
   <script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script>
 
+    <div id="vs_panel">
+    <form action="/" method="post">
+        <input type="image" name="submit" src="/img?img_id={{tache1.key}}" border="0">
+        <input type="hidden" name="winner" id="winner" value="{{tache1.key}}"/>
+        <input type="hidden" name="loser" id="loser" value="{{tache2.key}}"/>
+    </form>
+    <span class="vs">VS.</span>
+    <form action="/" method="post">
+        <input type="image" name="submit" src="/img?img_id={{tache2.key}}" border="0">
+        <input type="hidden" name="winner" id="winner" value="{{tache2.key}}"/>
+        <input type="hidden" name="loser" id="loser" value="{{tache1.key}}"/>
+    </form>
 {% endblock %}
