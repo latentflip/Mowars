@@ -7,20 +7,15 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/base.css" media="all">
 </head>
 <body>
-    <div id="container-outer" class="container-12">
-        <div id="container">
-            <div id="header-outer">
-                <div id="header">
-                    
-                </div>
-            </div>
-            <div id="content-outer">
-                <div id="content">
-                    {% block content %}
-                    {% endblock %}
-                </div>
-            </div>
-        </div>
+  <div class="container_12">
+    <div class="grid_12" style="text-align: center;">
+      <img src="/images/bigtache.png" alt="Moustache Wars" title="Moustache Wars" width="800" />
     </div>
+  </div>
+  
+  <div class="container_12">
+    {% block content %}
+    {% endblock %}
+  </div>
 </body>
 </html>
