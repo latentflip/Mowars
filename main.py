@@ -1,4 +1,8 @@
-import cgi, os
+import cgi, os, sys
+
+sys.path.insert(0, "lib")
+
+import PIL
 
 from google.appengine.api import users
 from google.appengine.ext import webapp
@@ -7,8 +11,7 @@ from google.appengine.ext.webapp import template
 from google.appengine.ext import db
 from google.appengine.api import images
 
-import sys
-sys.path.insert(0, "lib")
+
 from twitter_oauth_handler import *
 
 from models import Moustache
@@ -32,7 +35,7 @@ class Upload(webapp.RequestHandler):
 
     if self.request.get('add-tache'):
       tache.name = self.request.get('name')
-      avatar = images.resize(self.request.get("image"), 32, 32)
+      tache_image = images.resize(self.request.get('image'), 400, 400)
       tache.image = db.Blob(tache_image)
       tache.put()
       self.redirect('/')
@@ -59,6 +62,7 @@ class Image (webapp.RequestHandler):
       self.response.out.write(tache.image)
     else:
       self.error(404)
+
 
 HEADER = """
 <html><head><title>Twitter OAuth Demo</title>
