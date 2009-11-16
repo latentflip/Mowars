@@ -129,3 +129,4 @@ class Vote(db.Model):
   loser = db.ReferenceProperty(Moustache,
           collection_name="vote_loser_set")
   name = db.StringProperty(default='Guest')
+  ip = db.StringProperty(default='')

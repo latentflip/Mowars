@@ -63,6 +63,7 @@ class MainPage(webapp.RequestHandler):
             info = client.get("/account/verify_credentials")
             vote.name = info["screen_name"]
         
+        vote.ip = self.request.remote_addr
         vote.put()
         
         #Wins and losses
