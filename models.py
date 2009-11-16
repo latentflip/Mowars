@@ -69,6 +69,7 @@ class Spider(db.Model):
     last_since = db.DateProperty(default=default_since)
     last_until = db.DateProperty(default=default_until)
     twitpics = db.StringListProperty()
+    last_since_id = db.StringProperty()
 
 def get_spider():
     query = Spider.all().order('-last_search')
@@ -127,3 +128,4 @@ class Vote(db.Model):
           collection_name="vote_winner_set")
   loser = db.ReferenceProperty(Moustache,
           collection_name="vote_loser_set")
+  name = db.StringProperty(default='Guest')

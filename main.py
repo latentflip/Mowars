@@ -52,9 +52,17 @@ class MainPage(webapp.RequestHandler):
         return template_values
         
     def post(self):
+        client = OAuthClient("twitter", self)
+        logged_in = client.get_cookie()
+        
         loser = db.get(str(self.request.get('loser')))
         winner = db.get(str(self.request.get('winner')))
         vote = Vote(winner=winner, loser=loser)
+        
+        if logged_in:
+            info = client.get("/account/verify_credentials")
+            vote.name = info["screen_name"]
+        
         vote.put()
         
         #Wins and losses
@@ -119,10 +127,12 @@ class Profile(webapp.RequestHandler):
         
 
 
-today = date.today()
+
 
 class GrabTwitter(webapp.RequestHandler):
     def get(self):
+        today = date.today()
+        
         spider = get_spider()
         if not spider:
             spider = Spider()
@@ -141,37 +151,34 @@ class GrabTwitter(webapp.RequestHandler):
                 res = reg.findall(twt['text'])
             
                 for url_groups in res:
-                    dict = {
-                        'name': twt['from_user'],
-                        'message': twt['text'],
-                        'img_url': url_groups[1],
-                    }
 
+                    twitpic_url = url_groups[1]
                     tache = Moustache()
-                    tache.name = dict['name']
-                    tache.tweet = dict['message']
-                    tache.twitpic = dict['img_url']
+                    tache.name = twt['from_user']
+                    tache.tweet = twt['text']
+                    tache.twitpic = twitpic_url
                     
-                    if dict['img_url'] not in twitpic_spider_list:
+                    if twitpic_url not in twitpic_spider_list:
                         try:
-                            tache_image = images.resize(get_twitpic_image(dict['img_url']), 400, 400)
+                            tache_image = images.resize(get_twitpic_image(twitpic_url), 400, 400)
                             tache.image = db.Blob(tache_image)
                             tache.put()
-                            twitpic_spider_list.append(dict['img_url'])
+                            twitpic_spider_list.append(twitpic_url)
                             results.append(dict)
                         except:
                             pass
         
+        one_day = timedelta(days=1)
         spider.last_since = spider.last_until
-        new_until = spider.last_until + timedelta(days=1)
+        new_until = spider.last_until + one_day
         if new_until<=today:
             spider.last_until = new_until
         else:
             spider.last_until = today
+            spider.last_since = today - one_day
         spider.twitpics = twitpic_spider_list
         spider.put()
-        spider = get_spider()
-        self.response.out.write(str(spider.twitpics))
+        self.response.out.write(results)
 
 class Upload(webapp.RequestHandler):
   def post(self):

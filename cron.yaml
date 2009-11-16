@@ -1,0 +1,4 @@
+cron:
+- description: grabtweets
+  url: /grabtwitter
+  schedule: every 10 minutes
