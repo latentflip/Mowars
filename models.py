@@ -53,6 +53,10 @@ def get_bottom_taches():
 def get_taches_by_username(username):
     query  = Moustache.all().filter('name = ', username)
     return query.fetch(20)
+    
+def get_taches_by_twitpic(twitpic):
+    query  = Moustache.all().filter('twitpic = ', twitpic)
+    return query.fetch(20)
 
 def total_taches():
   """Find the total number of taches in the datastore
@@ -61,8 +65,11 @@ def total_taches():
   taches = Moustache.all(keys_only=True).count()
   return taches
 
-default_since = datetime.date(2009,11,01)
-default_until = datetime.date(2009,11,06)
+#!!If we clear the data store these must be reset!!
+#default_since = datetime.date(2009,11,01)
+#default_until = datetime.date(2009,11,06)
+default_since = datetime.date(2009,11,15)
+default_until = datetime.date(2009,11,16)
 
 class Spider(db.Model):
     last_search = db.DateTimeProperty(auto_now=True)
@@ -90,18 +97,17 @@ class Moustache(db.Model):
     created:        Date and time moustache was created
     creator:        The user that added this quote.
   """
+  #This is the twitter name! not facebook if we implement that
   name = db.StringProperty()
   modified = db.DateTimeProperty(auto_now=True)
   image = db.BlobProperty()
-  uri   = db.StringProperty()
-  rank = db.StringProperty()
   created = db.DateTimeProperty(auto_now_add=True)
-  votesum = db.IntegerProperty(default=0)
-  creator = db.UserProperty()
   wins = db.IntegerProperty(default=0)
   losses = db.IntegerProperty(default=0)
   win_percentage = db.IntegerProperty(default=0)
+  #This is the twitter message
   tweet = db.StringProperty(default='', multiline=True)
+  #This is the twitpic url
   twitpic = db.StringProperty(default='')
   
   def total_battles(self):

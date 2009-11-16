@@ -2,7 +2,10 @@
 
 {% block content %}
 
-<h1>{{ranking_type}} 10</h1>
+<h1>{{twitter_username}}'s MoustacheWars Profile</h1>
+<p class="retweet_me">
+    <a href="http://www.twitter.com/home/?status=Check+out+my+profile+on+@MoustacheWars+http://moustachewars.appspot.com/profile/{{twitter_username}}+mowars">Tweet This Page</a>
+</p>
 
 <ul class="rank_list">
 {% for tache in taches %}
