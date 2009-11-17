@@ -124,7 +124,7 @@ class Top10(BasicPage):
         }
         self.render_template(template_values)
   
-class Bottom10(webapp.RequestHandler):
+class Bottom10(BasicPage):
     template_file = 'topbottom.html'
     def get(self):
         """Returns the bottom 10 taches template"""

@@ -10,7 +10,7 @@
         <h4>{{forloop.counter}}</h4>
         <img src="/img?img_id={{ tache.key }}" alt="">
         <div class="tweet">
-            <p>{{tache.tweet}}
+            <p>{{tache.tweet|urlize}}
         </div>
         <div class="info">
             <ul>
