@@ -8,7 +8,7 @@
 </p>
 
 <ul class="rank_list">
-{% for tache in taches %}
+{% for tache in taches|dictsortreversed:"win_percentage" %}
     <li>
         <h4>{{forloop.counter}}</h4>
         <img src="/img?img_id={{ tache.key }}" alt="">
