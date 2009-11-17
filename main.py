@@ -2,7 +2,6 @@ import cgi, os, sys, re
 
 sys.path.insert(0, "lib")
 
-import PIL
 from datetime import date
 
 from google.appengine.api import users
