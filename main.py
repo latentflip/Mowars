@@ -18,7 +18,7 @@ from twitpicapi import get_twitpic_image
 from twitter_oauth_handler import *
 #import PIL
 
-from models import Moustache, get_random_taches, Vote, get_top_taches, get_bottom_taches, get_spider, Spider, get_taches_by_username, get_taches_by_twitpic
+from models import Moustache, get_random_taches, Vote, get_top_taches, get_bottom_taches, get_spider, Spider, get_taches_by_username, get_taches_by_twitpic, check_vote_spam
 
 class BasicPage(webapp.RequestHandler):
     template_file = ''
@@ -81,22 +81,36 @@ class MainPage(BasicPage):
         if logged_in:
             info = client.get("/account/verify_credentials")
             vote.name = info["screen_name"]
+        else:
+            vote.name = 'Guest'
         
         #TODO: Stop spam-voting for same key from same ip repeatedly
         vote.ip = self.request.remote_addr
-        vote.put()
         
-        #Wins and losses
-        loser.losses = loser.losses+1
-        loser.win_percentage = loser.calc_win_percentage()
-        loser.put()
+        if check_vote_spam(vote.ip, winner):
+            self.redirect('/msg=You+appear+to+be+votespamming,+please+stop+or+try+again+later')
+        else:
+            vote.put()
         
-        winner.wins = winner.wins+1
-        winner.win_percentage = winner.calc_win_percentage()
-        winner.put()
+            #Wins and losses
+            loser.losses = loser.losses+1
+            loser.win_percentage = loser.calc_win_percentage()
+            loser.put()
         
-        #Redirect so that people cannot repost twice
-        self.redirect('/?w=%s&l=%s' % (winner.key().id(), loser.key().id()))
+            winner.wins = winner.wins+1
+            winner.win_percentage = winner.calc_win_percentage()
+            winner.put()
+        
+            #Redirect so that people cannot repost twice
+            self.redirect('/?w=%s&l=%s' % (winner.key().id(), loser.key().id()))
+
+class CountVote(BasicPage):
+    def get(self):
+        win_key = str(self.request.get('k'))
+        winner = db.get(win_key)
+        ip = str(self.request.remote_addr)
+        count = check_vote_spam(ip, winner)
+        self.response.out.write(str(win_key)+' '+str(count)+' '+ip)
 
 class Top10(BasicPage):
     template_file = 'topbottom.html'
@@ -263,6 +277,7 @@ application = webapp.WSGIApplication(
                                       ('/grabtwitter', GrabTwitter),
                                       ('/profile/(.*)', Profile),
                                       ('/tp/(.*)', GetByTwitpic),
+                                      ('/cnt', CountVote),
                                       # Logins
                                       ('/oauth/(.*)/(.*)', OAuthHandler)
                                      ],

@@ -116,18 +116,23 @@ class Moustache(db.Model):
   def calc_win_percentage(self):
     total = self.wins+self.losses
     return int((float(self.wins)/total)*100)
-      
 
+def seconds_ago(time_s):
+    return datetime.datetime.now() - datetime.timedelta(seconds=time_s)      
+
+def check_vote_spam(ip, winner):
+    """Returns true if it looks like vote spamming"""
+    mins = 0.5
+    limit = 5
+    count = Vote.all().filter("winner =", winner).filter("ip = ", ip).filter("created >", seconds_ago(mins*60)).count()
+    if count>limit:
+        return True
+    else:
+        return False
+    
 
 class Vote(db.Model):
   """Storage for a single vote by a single user on a single quote.
-  
-  Index
-    key_name: The email address of the user that voted.
-    parent:   The quote this is a vote for.
-  
-  Properties
-    vote: The value of 1 for like, -1 for dislike.
   """
   created = db.DateTimeProperty(auto_now_add=True)
   winner = db.ReferenceProperty(Moustache,
