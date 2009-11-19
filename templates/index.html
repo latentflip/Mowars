@@ -19,7 +19,7 @@
                 <input type="hidden" name="loser" id="loser" value="{{tache2.key}}"/>
             </form>
         </div>
-        <div class="vs grid_2">VS</div>
+        <div class="vs grid_2"><p>VS</p></div>
         <div class="vote_img grid_7">
             <form action="/" method="post">
                 <input type="image" name="submit" src="/img?img_id={{tache2.key}}" border="0">
@@ -27,19 +27,31 @@
                 <input type="hidden" name="loser" id="loser" value="{{tache1.key}}"/>
             </form>
         </div>
+        <div class="clear"></div>
+        <div id="howtovote" class="grid_16">
+            <p>Click on your favourite tash to vote!</p>
+        </div>
+        <div class="clear"></div>
     </div>
     <div class="clear"></div>
-    <div id="last_vote" class="grid_12">
-        <div id="winner">
-            <h3>Last Winner</h3>
-            <p>{{last_winner.win_percentage}}</p>
+    
+    {% if last_winner %}
+    <div id="last_vote" >
+        <div id="winner" class="last_img grid_4 prefix_2">
             <img src="/img?img_id={{last_winner.key}}" alt="">
+            <p><a href="/profile/{{last_winner.name}}">{{last_winner.name}}</a></p>
+            <p>Current win percentage: {{last_winner.win_percentage}}</p>
         </div>
-        <div id="loser">
-            <h3>Last Loser</h3>
-            <p>{{last_loser.win_percentage}}</p>
+        <div class="beats grid_4">
+            beats
+        </div>
+        <div id="loser" class="last_img grid_4">
             <img src="/img?img_id={{last_loser.key}}" alt="">
+            <p><a href="/profile/{{last_loser.name}}">{{last_loser.name}}</a></p>
+            <p>Current win percentage: {{last_loser.win_percentage}}</p>
         </div>
+        <div class="clear"></div>
     </div>
     <div class="clear"></div>
+    {% endif %}
 {% endblock %}

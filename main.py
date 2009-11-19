@@ -28,6 +28,17 @@ class BasicPage(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), 'templates/'+template_file)
         self.response.out.write(template.render(path, template_values))
 
+# class TMP(webapp.RequestHandler):
+#     def get(self):
+#         offset = int(self.request.get('off'))
+#         tashes = Moustache.all().fetch(50,offset)
+#         
+#         for tash in tashes:
+#             the_image = images.resize(tash.image, width=340, height=340)
+#             tash.image = the_image
+#             tash.put()
+#             self.response.out.write(tash.name)
+
 class MainPage(BasicPage):
     template_file = 'index.html'
     def get(self):
@@ -195,7 +206,7 @@ class GrabTwitter(webapp.RequestHandler):
                     #Don't regrab if an older one has 
                     if twitpic_url not in twitpic_spider_list:
                         try:
-                            tache_image = images.resize(get_twitpic_image(twitpic_url), 350, 350)
+                            tache_image = images.resize(get_twitpic_image(twitpic_url), 340, 340)
                             tache.image = db.Blob(tache_image)
                             tache.put()
                             twitpic_spider_list.append(twitpic_url)
@@ -233,7 +244,7 @@ class Upload(BasicPage):
         
         if self.request.get('add-tache'):
             tache.name = twitter_info["screen_name"]
-            tache_image = images.resize(self.request.get('image'), 350, 350)
+            tache_image = images.resize(self.request.get('image'), 340, 340)
             tache.image = db.Blob(tache_image)
             tache.put()
             self.redirect('/profile/'+tache.name)
@@ -260,10 +271,11 @@ class Image (webapp.RequestHandler):
     def get(self):
         tache_id = self.request.get("img_id")
         tache = db.get(tache_id)
-        
-        if tache.image:
+        the_image = tache.image
+
+        if the_image:
             self.response.headers['Content-Type'] = "image/jpg"
-            self.response.out.write(tache.image)
+            self.response.out.write(the_image)
         else:
             self.error(404)
 
@@ -277,6 +289,7 @@ application = webapp.WSGIApplication(
                                       ('/profile/(.*)', Profile),
                                       ('/tp/(.*)', GetByTwitpic),
                                       ('/cnt', CountVote),
+                                      #('/tmp', TMP),
                                       # Logins
                                       ('/oauth/(.*)/(.*)', OAuthHandler)
                                      ],
