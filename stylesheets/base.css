@@ -113,12 +113,12 @@ p {
 #foot {
 	background: #8c402e;
 	margin-bottom: 30px;
+	padding-top: 20px;
+	padding-bottom: 15px;
 }
 #footer p, #footer a {
 	text-align: center;
 	color: #F2e8df;
 	text-shadow: 0 0 0 #000;
-	padding-top: 20px;
-	padding-bottom: 15px;
 	margin-bottom: 0.5em;
 }
