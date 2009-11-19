@@ -2,34 +2,34 @@
 
 {% block content %}
 
-{% if logged_in %}
+<!-->{% if logged_in %}
   Logged in as <strong>{{ screen_name }}</strong>.
 {% else %}
   <a href="/oauth/twitter/login">Login via Twitter</a> to <a href="/upload">upload</a>.
-{% endif %}
+{% endif %}-->
 
-  <a name="fb_share" type="button_count" share_url="http://moustachewars.appspot.com" href="http://www.facebook.com/sharer.php">Share Moustache Wars!</a>
-  <script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script>
+  <!--><a name="fb_share" type="button_count" share_url="http://moustachewars.appspot.com" href="http://www.facebook.com/sharer.php">Share Moustache Wars!</a>
+  <script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script>-->
 
     <div id="vs_panel">
-        <div class="vote_img">
+        <div class="vote_img grid_7">
             <form action="/" method="post">
                 <input type="image" name="submit" src="/img?img_id={{tache1.key}}" border="0">
                 <input type="hidden" name="winner" id="winner" value="{{tache1.key}}"/>
                 <input type="hidden" name="loser" id="loser" value="{{tache2.key}}"/>
             </form>
         </div>
-        <div class="vs">VS.</div>
-        <div class="vote_img">
+        <div class="vs grid_2">VS</div>
+        <div class="vote_img grid_7">
             <form action="/" method="post">
                 <input type="image" name="submit" src="/img?img_id={{tache2.key}}" border="0">
                 <input type="hidden" name="winner" id="winner" value="{{tache2.key}}"/>
                 <input type="hidden" name="loser" id="loser" value="{{tache1.key}}"/>
             </form>
         </div>
-        <div class="clear"></div>
     </div>
-    <div id="last_vote">
+    <div class="clear"></div>
+    <div id="last_vote" class="grid_12">
         <div id="winner">
             <h3>Last Winner</h3>
             <p>{{last_winner.win_percentage}}</p>
@@ -41,4 +41,5 @@
             <img src="/img?img_id={{last_loser.key}}" alt="">
         </div>
     </div>
+    <div class="clear"></div>
 {% endblock %}
