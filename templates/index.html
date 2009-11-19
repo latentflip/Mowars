@@ -37,9 +37,13 @@
     
     {% if last_winner %}
     <div id="last_vote" >
+        <div class="yourlast grid_16">
+            <h2>Your last vote:</h2>
+        </div>
+        <div class="clear"></div>
         <div id="winner" class="last_img grid_4 prefix_2">
             <img src="/img?img_id={{last_winner.key}}" alt="">
-            <p><a href="/profile/{{last_winner.name}}">{{last_winner.name}}</a></p>
+            <p><a href="http://twitter.com/{{last_winner.name}}">{{last_winner.name}}</a></p>
             <p>Current win percentage: {{last_winner.win_percentage}}</p>
         </div>
         <div class="beats grid_4">
@@ -47,7 +51,7 @@
         </div>
         <div id="loser" class="last_img grid_4">
             <img src="/img?img_id={{last_loser.key}}" alt="">
-            <p><a href="/profile/{{last_loser.name}}">{{last_loser.name}}</a></p>
+            <p><a href="http://twitter.com/{{last_loser.name}}">{{last_loser.name}}</a></p>
             <p>Current win percentage: {{last_loser.win_percentage}}</p>
         </div>
         <div class="clear"></div>
