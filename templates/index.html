@@ -24,12 +24,13 @@
         
         <div class="grid_6 valign" style="margin: 40px 0 40px 0; text-align: center;">
           <img src="/images/king.png" alt="Who is going to be the champion of moustache battles 09?" title="Who is going to be the champion of moustache battles 09?" /><br /><br />
-          <a href="/tashwin">see top 10 current contenders</a>
+          <a href="/tashwin">see the Top 10 contenders</a><br/>
+          <a href="/tashfail">and the Bottom 10</a>
         </div>
         
         <div class="grid_10 valign" style="margin: 40px 0 40px 0;">
           <p><strong>Think you got what it takes?</strong> Post your tash on Twitter with a #movember tag, and we'll automatically pull it in within 30 minutes or so.</p>
-          
+          <p><strong>Find your profile at:</strong> http://moustachewars.appspot.com/profile/&lt;<b>your twitter username here</b>&gt;</p>
           <p><strong>Movember</strong> (the month formerly known as November) is a moustache growing charity event held during November each year that raises funds and awareness for men's health. <a href="http://www.movember.com/">Visit the site.</a></p>
           
           <a name="fb_share" type="button_count" share_url="http://moustachewars.appspot.com" href="http://www.facebook.com/sharer.php">Share Moustache Wars on Facebook!</a>
@@ -47,7 +48,7 @@
         <div class="clear"></div>
         <div id="winner" class="last_img grid_4 prefix_2">
             <p><img src="/img?img_id={{last_winner.key}}" alt=""></p>
-            <p><a href="http://twitter.com/{{last_winner.name}}">{{last_winner.name}}</a></p>
+            <p><a href="/profile/{{last_winner.name}}">{{last_winner.name}}</a></p>
             <p>Current win percentage: {{last_winner.win_percentage}}</p>
         </div>
         <div class="beats grid_4">
@@ -55,7 +56,7 @@
         </div>
         <div id="loser" class="last_img grid_4">
             <p><img src="/img?img_id={{last_loser.key}}" alt=""></p>
-            <p><a href="http://twitter.com/{{last_loser.name}}">{{last_loser.name}}</a></p>
+            <p><a href="/profile/{{last_loser.name}}">{{last_loser.name}}</a></p>
             <p>Current win percentage: {{last_loser.win_percentage}}</p>
         </div>
         <div class="clear"></div>

@@ -116,15 +116,50 @@ p {
 	padding-top: 20px;
 	padding-bottom: 15px;
 }
-#footer p, #footer a {
-	text-align: center;
-	color: #F2e8df;
-	text-shadow: 0 0 0 #000;
-	margin-bottom: 0.5em;
-}
+	#footer p, #footer a {
+		text-align: center;
+		color: #F2e8df;
+		text-shadow: 0 0 0 #000;
+		margin-bottom: 0.5em;
+	}
 
 input[type="image"] {
-    border: 8px solid #736345;
+    border: 3px solid #736345;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
+
+h1 {
+	font-size:300%;
+	margin-bottom:30px;
+}
+
+h1 .retweet_me {
+	font-size: 40%;
+}
+
+.rank_list {
+	padding-bottom: 20px;
+}
+
+	.rank_list li {
+		padding-bottom: 30px;
+	}
+	
+	.rank_list li li {
+		padding-bottom: 3px;
+	}
+	
+	.rank_list .rank h4{
+		font-size: 300%;
+	}
+
+	.rank_list .tweet {
+		font-size: 80%;
+	}
+	
+	.rank_list .info {
+		margin-top:30px;
+	}
+	
+.twitter_link {font-size: 80%;}
