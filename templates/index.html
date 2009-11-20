@@ -12,24 +12,35 @@
   <script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script>-->
 
     <div id="vs_panel">
-        <div class="vote_img grid_7">
+        <div class="vote_img grid_6">
             <form action="/" method="post">
-                <input type="image" name="submit" src="/img?img_id={{tache1.key}}" border="0">
+                <input type="image" name="submit" width="330" src="/img?img_id={{tache1.key}}" border="0">
                 <input type="hidden" name="winner" id="winner" value="{{tache1.key}}"/>
                 <input type="hidden" name="loser" id="loser" value="{{tache2.key}}"/>
             </form>
         </div>
-        <div class="vs grid_2"><p>VS</p></div>
-        <div class="vote_img grid_7">
+        <div class="vs grid_4">
+          <img src="/images/vs.png" alt="VS" title="VS" /><br />
+          <img src="/images/click_to_vote.png" alt="Click to vote" title="Click to vote" />
+        </div>
+        <div class="vote_img grid_6">
             <form action="/" method="post">
-                <input type="image" name="submit" src="/img?img_id={{tache2.key}}" border="0">
+                <input type="image" name="submit" width="330" src="/img?img_id={{tache2.key}}" border="0">
                 <input type="hidden" name="winner" id="winner" value="{{tache2.key}}"/>
                 <input type="hidden" name="loser" id="loser" value="{{tache1.key}}"/>
             </form>
         </div>
         <div class="clear"></div>
-        <div id="howtovote" class="grid_16">
-            <p>Click on your favourite tash to vote!</p>
+        
+        <div class="grid_6 valign" style="margin: 40px 0 40px 0; text-align: center;">
+          <img src="/images/king.png" alt="Who is going to be the champion of moustache battles 09?" title="Who is going to be the champion of moustache battles 09?" /><br /><br />
+          <a href="/tashwin">see top 10 current contenders</a>
+        </div>
+        
+        <div class="grid_10 valign" style="margin: 40px 0 40px 0;">
+          <p><strong>Think you got what it takes?</strong> Post your tash on Twitter with a #movember tag, and we'll automatically pull it in within 30 minutes or so.</p>
+          
+          <p><strong>Movember</strong> (the month formerly known as November) is a moustache growing charity event held during November each year that raises funds and awareness for men's health. <a href="http://www.movember.com/">Visit the site.</a></p>
         </div>
         <div class="clear"></div>
     </div>
