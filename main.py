@@ -28,17 +28,6 @@ class BasicPage(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), 'templates/'+template_file)
         self.response.out.write(template.render(path, template_values))
 
-# class TMP(webapp.RequestHandler):
-#     def get(self):
-#         offset = int(self.request.get('off'))
-#         tashes = Moustache.all().fetch(50,offset)
-#         
-#         for tash in tashes:
-#             the_image = images.resize(tash.image, width=340, height=340)
-#             tash.image = the_image
-#             tash.put()
-#             self.response.out.write(tash.name)
-
 class MainPage(BasicPage):
     template_file = 'index.html'
     def get(self):
@@ -288,8 +277,6 @@ application = webapp.WSGIApplication(
                                       ('/grabtwitter', GrabTwitter),
                                       ('/profile/(.*)', Profile),
                                       ('/tp/(.*)', GetByTwitpic),
-                                      ('/cnt', CountVote),
-                                      #('/tmp', TMP),
                                       # Logins
                                       ('/oauth/(.*)/(.*)', OAuthHandler)
                                      ],
