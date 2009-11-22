@@ -44,7 +44,14 @@ def get_random_taches():
 
 def get_top_taches():
     query = Moustache.all().order('-win_percentage')
-    return query.fetch(10)
+    top100 = query.fetch(100)
+    unique_in_top100 = []
+    seen_names = []
+    for tash in top100:
+        if not tash.name in seen_names:
+            unique_in_top100.append(tash)
+            seen_names.append(tash.name)
+    return unique_in_top100[0:10]
     
 def get_bottom_taches():
     query = Moustache.all().order('win_percentage')
