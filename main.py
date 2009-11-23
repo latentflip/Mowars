@@ -17,7 +17,10 @@ from twitpicapi import get_twitpic_image
 from twitter_oauth_handler import *
 #import PIL
 
-from models import Moustache, get_random_taches, Vote, get_top_taches, get_bottom_taches, get_spider, Spider, get_taches_by_username, get_taches_by_twitpic, check_vote_spam
+from models import Moustache, get_random_taches, Vote, get_top_taches, get_bottom_taches, get_spider, Spider, get_taches_by_username, get_taches_by_twitpic, check_vote_spam, get_all_taches
+
+import random
+
 
 class BasicPage(webapp.RequestHandler):
     def head(self):
@@ -72,8 +75,12 @@ class MainPage(BasicPage):
         
     def post(self):
         
-        loser = db.get(str(self.request.get('loser')))
-        winner = db.get(str(self.request.get('winner')))
+        loser_key = str(self.request.get('winner'))
+        winner_key = str(self.request.get('loser'))
+        
+        loser = db.get(winner_key)
+        winner = db.get(loser_key)
+        
         vote = Vote(winner=winner, loser=loser)
         
         #To store username if the user is logged in
@@ -102,7 +109,7 @@ class MainPage(BasicPage):
             winner.wins = winner.wins+1
             winner.win_percentage = winner.calc_win_percentage()
             winner.put()
-        
+                
             #Redirect so that people cannot repost twice
             self.redirect('/?w=%s&l=%s' % (winner.key().id(), loser.key().id()))
 
@@ -113,6 +120,14 @@ class CountVote(BasicPage):
         ip = str(self.request.remote_addr)
         count = check_vote_spam(ip, winner)
         self.response.out.write(str(win_key)+' '+str(count)+' '+ip)
+
+class DoRank(BasicPage):
+    def get(self):
+        offset = int(self.request.get('o'))
+        taches = get_all_taches(100,offset)
+        taches = [(tache.key(), tache.win_percentage, tache.wins) for tache in taches]
+        
+        
 
 class Top10(BasicPage):
     template_file = 'topbottom.html'
@@ -186,25 +201,28 @@ class GrabTwitter(webapp.RequestHandler):
         for twt in tw_search_results['results']:
             #Crudely try to find original tweeter
             message = twt['text']
-            if 'RT' not in message[0:8]:
+            if 'RT' in message:
+                dirty=1
+            else:
+                dirty=0
                 #Find all twitpics
-                res = reg.findall(twt['text'])
-                for url_groups in res:
-                    #This is just the twitpic link slug
-                    twitpic_url = url_groups[1]
-                    #Make a tache
-                    tache = Moustache(name=twt['from_user'], tweet=twt['text'], twitpic = twitpic_url)
-                    
-                    #Don't regrab if an older one has 
-                    if twitpic_url not in twitpic_spider_list:
-                        try:
-                            tache_image = images.resize(get_twitpic_image(twitpic_url), 340, 340)
-                            tache.image = db.Blob(tache_image)
-                            tache.put()
-                            twitpic_spider_list.append(twitpic_url)
-                            results.append(dict)
-                        except:
-                            pass
+            res = reg.findall(twt['text'])
+            for url_groups in res:
+                #This is just the twitpic link slug
+                twitpic_url = url_groups[1]
+                #Make a tache
+                tache = Moustache(name=twt['from_user'], tweet=twt['text'], twitpic = twitpic_url, RTdirt=dirty)
+                
+                #Don't regrab if an older one has 
+                if twitpic_url not in twitpic_spider_list:
+                    try:
+                        tache_image = images.resize(get_twitpic_image(twitpic_url), 340, 340)
+                        tache.image = db.Blob(tache_image)
+                        tache.put()
+                        twitpic_spider_list.append(twitpic_url)
+                        results.append(twitpic_url)
+                    except:
+                        pass
         
         #Increase limits by a day a time, or just keep it as today and yesterday
         one_day = timedelta(days=1)
@@ -280,6 +298,7 @@ application = webapp.WSGIApplication(
                                       ('/grabtwitter', GrabTwitter),
                                       ('/profile/(.*)', Profile),
                                       ('/tp/(.*)', GetByTwitpic),
+                                      ('/rank', DoRank),
                                       # Logins
                                       ('/oauth/(.*)/(.*)', OAuthHandler)
                                      ],

@@ -19,16 +19,25 @@ Moustaches, Votes and Voters in the mowars application.
 """
 
 
-import datetime
+import datetime, sys
 import hashlib
 
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from google.appengine.api import users
+from google.appengine.api import datastore
+from google.appengine.api import datastore_types, datastore_errors
 import random
+
+sys.path.insert(0, "lib")
+
 
 PAGE_SIZE = 20
 DAY_SCALE = 4
+
+def get_all_taches(limit=100, offset=0):
+    taches = Moustache.all().fetch(limit, offset)
+    return taches
 
 def get_random_taches():
   taches = Moustache.all()
@@ -98,6 +107,7 @@ def get_spider():
     else:
         return False
 
+
 class Moustache(db.Model):
   """Storage for a single moustache and its metadata
   
@@ -121,6 +131,7 @@ class Moustache(db.Model):
   tweet = db.StringProperty(default='', multiline=True)
   #This is the twitpic url
   twitpic = db.StringProperty(default='')
+  RTdirt = db.StringProperty(default='')
   
   def total_battles(self):
       return self.wins+self.losses
