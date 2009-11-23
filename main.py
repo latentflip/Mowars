@@ -20,6 +20,9 @@ from twitter_oauth_handler import *
 from models import Moustache, get_random_taches, Vote, get_top_taches, get_bottom_taches, get_spider, Spider, get_taches_by_username, get_taches_by_twitpic, check_vote_spam
 
 class BasicPage(webapp.RequestHandler):
+    def head(self):
+        self.response.set_status(200)
+
     template_file = ''
     
     def render_template(self, template_values, template_file=''):
