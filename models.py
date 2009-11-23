@@ -52,20 +52,23 @@ def get_random_taches():
   return taches[int1], taches[int2]
 
 def unique_in_top_n(n=10):
-    top = Moustache.all().order("-win_percentage").fetch(n)
     uniques = []
     seen_names = []
-    for tash in top:
-        if not tash.name in seen_names:
-            uniques.append(tash)
-            seen_names.append(tash.name)
-    return uniques
+    for offset in [1*n,2*n,3*n,4*n,5*n,6*n,7*n]:
+        top = Moustache.all().order("-win_percentage").fetch(n, offset)
+        for tash in top:
+            if not tash.name in seen_names and tash.wins>10:
+                uniques.append(tash)
+                seen_names.append(tash.name)
+                if len(uniques)>=10:
+                    return uniques[0:10]
 
 def get_top_taches():
-    for n in [20, 30, 40, 50, 60, 70, 80, 90, 100]:
-        topn = unique_in_top_n(n)
-        if len(topn) >= 10:
-            return topn[0:10]
+    # for n in [20, 30, 40, 50, 60, 70, 80, 90, 100]:
+    #     topn = unique_in_top_n(n)
+    #     if len(topn) >= 10:
+    #         return topn[0:10]
+    return unique_in_top_n()
 
 def get_bottom_taches():
     query = Moustache.all().order('win_percentage')

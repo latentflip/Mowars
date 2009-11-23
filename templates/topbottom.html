@@ -17,8 +17,7 @@
 
 <div class="rankings">
     <ul class="rank_list">
-    {% ifequal ranking_type "Top" %}
-        {% for tache in taches|dictsortreversed:"wins" %}
+        {% for tache in taches %}
             <li class="ranking">
                 <div class="rank grid_1 prefix_2 alpha">
                     <h4>{{forloop.counter}}</h4>
@@ -39,29 +38,6 @@
                 <div class="clear"></div>
             </li>
         {% endfor %}
-    {% else %}
-        {% for tache in taches|dictsortreversed:"losses" %}
-            <li class="ranking">
-                <div class="rank grid_1 prefix_2 alpha">
-                    <h4>{{forloop.counter}}</h4>
-                </div>
-                <div class="image grid_4">
-                    <img src="/img?img_id={{ tache.key }}" alt="">
-                    <p class="tweet">{{tache.tweet|urlize}}</p>
-                </div>
-                <div class="info grid_5 valign omega">
-                    <ul>
-                        <li>Owner: <a href="/profile/{{tache.name}}">{{tache.name}}</a>
-                            <span class="twitter_link">(<a href="http://twitter.com/{{tache.name}}">@{{tache.name}}</a>)</span></li>
-                        <li>Win Percentage: {{tache.win_percentage}}</li>
-                        <li>Wins: {{tache.wins}}/{{tache.total_battles}}</li>
-                        <li>Losses: {{tache.losses}}/{{tache.total_battles}}</li>
-                    </ul>
-                </div>
-                <div class="clear"></div>
-            </li>
-        {% endfor %}
-    {% endifequal %}
     </ul>
 </div>
 <div class="clear">
