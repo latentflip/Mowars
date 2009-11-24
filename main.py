@@ -202,9 +202,9 @@ class GrabTwitter(webapp.RequestHandler):
             #Crudely try to find original tweeter
             message = twt['text']
             if 'RT' in message:
-                dirty=1
+                dirty='yes'
             else:
-                dirty=0
+                dirty=''
                 #Find all twitpics
             res = reg.findall(twt['text'])
             for url_groups in res:
