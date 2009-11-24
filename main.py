@@ -10,6 +10,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext.webapp import template
 from google.appengine.ext import db
 from google.appengine.api import images
+from google.appengine.api import memcache
 
 import twitter as twapi
 from twitpicapi import get_twitpic_image
@@ -23,17 +24,22 @@ import random
 
 
 class BasicPage(webapp.RequestHandler):
-    def head(self):
+    def head(self, *args, **kwargs):
         self.response.set_status(200)
 
     template_file = ''
     
     def render_template(self, template_values, template_file=''):
+        rendered = self.render_template_memcache(template_values, template_file)
+        self.response.out.write(rendered)
+    
+    def render_template_memcache(self, template_values, template_file=''):
         if not template_file:
             template_file = self.template_file
         path = os.path.join(os.path.dirname(__file__), 'templates/'+template_file)
-        self.response.out.write(template.render(path, template_values))
-
+        rendered = template.render(path, template_values)
+        return rendered
+        
 class MainPage(BasicPage):
     template_file = 'index.html'
     def get(self):
@@ -133,25 +139,39 @@ class Top10(BasicPage):
     template_file = 'topbottom.html'
     def get(self):
         """Returns the top 10 taches template"""
-        taches = get_top_taches()
-        template_values = {
-            'page-title': 'Top 10 Taches',
-            'taches': taches,
-            'ranking_type': 'Top',
-        }
-        self.render_template(template_values)
-  
+        top10 = memcache.get("top10")
+        if top10 is not None:
+            self.response.out.write(top10)
+        else:
+            taches = get_top_taches()
+            template_values = {
+                'page-title': 'Top 10 Taches',
+                'taches': taches,
+                'ranking_type': 'Top',
+            }
+            rendered = self.render_template_memcache(template_values)
+            if not memcache.add("top10", rendered, 240):
+                logging.error("Memcache set failed.")
+            self.response.out.write(rendered)
+
 class Bottom10(BasicPage):
     template_file = 'topbottom.html'
     def get(self):
         """Returns the bottom 10 taches template"""
-        taches = get_bottom_taches()
-        template_values = {
-            'pagetitle': 'Bottom 10 Taches',
-            'taches': taches,
-            'ranking_type': 'Bottom',
-        }
-        self.render_template(template_values)
+        bot10 = memcache.get("bot10")
+        if bot10 is not None:
+            self.response.out.write(bot10)
+        else:
+            taches = get_bottom_taches()
+            template_values = {
+                'page-title': 'Bottom 10 Taches',
+                'taches': taches,
+                'ranking_type': 'Bottom',
+            }
+            rendered = self.render_template_memcache(template_values)
+            if not memcache.add("bot10", rendered, 240):
+                logging.error("Memcache set failed.")
+            self.response.out.write(rendered)
 
 class Profile(BasicPage):
     template_file = 'profile.html'

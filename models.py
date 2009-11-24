@@ -27,7 +27,7 @@ from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types, datastore_errors
-import random
+import random, pickle
 
 sys.path.insert(0, "lib")
 
@@ -60,8 +60,20 @@ def unique_in_top_n(n=10):
             if not tash.name in seen_names and tash.wins>10:
                 uniques.append(tash)
                 seen_names.append(tash.name)
-                if len(uniques)>=10:
-                    return uniques[0:10]
+                if len(uniques)>=n:
+                    return uniques[0:n]
+
+def unique_in_bottom_n(n=10):
+    uniques = []
+    seen_names = []
+    for offset in [1*n,2*n,3*n,4*n,5*n,6*n,7*n]:
+        top = Moustache.all().order("win_percentage").fetch(n, offset)
+        for tash in top:
+            if not tash.name in seen_names and tash.losses>10:
+                uniques.append(tash)
+                seen_names.append(tash.name)
+                if len(uniques)>=n:
+                    return uniques[0:n]
 
 def get_top_taches():
     # for n in [20, 30, 40, 50, 60, 70, 80, 90, 100]:
@@ -71,8 +83,9 @@ def get_top_taches():
     return unique_in_top_n()
 
 def get_bottom_taches():
-    query = Moustache.all().order('win_percentage')
-    return query.fetch(10)
+    #query = Moustache.all().order('win_percentage')
+    #return query.fetch(10)
+    return unique_in_bottom_n()
 
 def get_taches_by_username(username):
     query  = Moustache.all().filter('name = ', username)
