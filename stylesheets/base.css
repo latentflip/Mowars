@@ -95,6 +95,11 @@ p {
 		text-align: center;
 	}
 	
+		#last_vote .beats .winner, #last_vote .beats .loser {
+			font-size: 80%;
+			display: block;
+		}
+	
 	#last_vote p, #last_vote a {
 		color: #333;
 		text-align: center;
@@ -113,6 +118,7 @@ p {
     font-size: 10pt;
 	background: #8c402e;
 	margin-bottom: 30px;
+	margin-top: 20px;
 	padding-top: 20px;
 	padding-bottom: 15px;
 }

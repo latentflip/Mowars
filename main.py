@@ -179,6 +179,8 @@ class Profile(BasicPage):
     template_file = 'profile.html'
     def get(self, username):
         taches = get_taches_by_username(username)
+        if len(taches)==0:
+            self.redirect('/')
         template_values = {
             'page-title': 'Profile For '+username,
             'twitter_username': username,
