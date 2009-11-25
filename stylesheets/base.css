@@ -162,4 +162,10 @@ h1 .retweet_me {
 		margin-top:30px;
 	}
 	
-.twitter_link {font-size: 80%;}
+.twitter_link {font-size: 75%;}
+
+.share {
+	margin-top: 20px;
+	margin-bottom: 3px;
+}
+
