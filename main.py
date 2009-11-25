@@ -43,6 +43,8 @@ class BasicPage(webapp.RequestHandler):
 class MainPage(BasicPage):
     template_file = 'index.html'
     def get(self):
+        if os.environ['HTTP_HOST'].endswith('.appspot.com'):
+            self.redirect('http://moustachewars.com')
         extra_values = {}
         try:
             loser = Moustache.get_by_id(int(self.request.get('l')))
