@@ -340,7 +340,7 @@ def main():
                                           ('/oauth/(.*)/(.*)', OAuthHandler)
                                          ],
                                          debug=True)
-    application = redirect_from_appspot(application)
+    #application = redirect_from_appspot(application)
     run_wsgi_app(application)
 
 
