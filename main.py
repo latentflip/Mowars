@@ -309,23 +309,42 @@ class Image (webapp.RequestHandler):
         else:
             self.error(404)
 
-application = webapp.WSGIApplication(
-                                     [('/', MainPage),
-                                      ('/upload', Upload),
-                                      ('/img', Image),
-                                      ('/tashwin', Top10),
-                                      ('/tashfail', Bottom10),
-                                      ('/grabtwitter', GrabTwitter),
-                                      ('/profile/(.*)', Profile),
-                                      ('/tp/(.*)', GetByTwitpic),
-                                      ('/rank', DoRank),
-                                      # Logins
-                                      ('/oauth/(.*)/(.*)', OAuthHandler)
-                                     ],
-                                     debug=True)
+
+
+def redirect_from_appspot(wsgi_app):
+    def redirect_if_needed(env, start_response):
+       if env["HTTP_HOST"].startswith('moustachewars.appspot.com'):
+           import webob, urlparse
+           request = webob.Request(env)
+           scheme, netloc, path, query, fragment = urlparse.urlsplit(request.url)
+           url = urlparse.urlunsplit([scheme, 'www.moustachewars.com', path, query, fragment])
+           start_response('301 Moved Permanently', [('Location', url)])
+           return ["301 Moved Peramanently", "Click Here %s" % url]
+       else:
+           return wsgi_app(env, start_response)
+    return redirect_if_needed
 
 def main():
-  run_wsgi_app(application)
+    application = webapp.WSGIApplication(
+                                         [('/', MainPage),
+                                          ('/upload', Upload),
+                                          ('/img', Image),
+                                          ('/tashwin', Top10),
+                                          ('/tashfail', Bottom10),
+                                          ('/grabtwitter', GrabTwitter),
+                                          ('/profile/(.*)', Profile),
+                                          ('/mofile/(.*)', Profile),
+                                          ('/tp/(.*)', GetByTwitpic),
+                                          ('/rank', DoRank),
+                                          # Logins
+                                          ('/oauth/(.*)/(.*)', OAuthHandler)
+                                         ],
+                                         debug=True)
+    application = redirect_from_appspot(application)
+    run_wsgi_app(application)
+
+
+
 
 if __name__ == "__main__":
   main()
